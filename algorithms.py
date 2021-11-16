@@ -6,14 +6,15 @@ class Dijkstra:
     @staticmethod
     def solve(graph):
         dist = np.full(graph.vertices.flatten().shape, np.inf)
-        Q = np.array([vertex for vertex in graph.vertices.flatten()])
+        Q = np.array([vertex if not vertex.blocked else False for vertex in graph.vertices.flatten()])
         prev = np.full(graph.vertices.flatten().shape, None)
         dist[graph.vertices[graph.start].pos] = 0
 
         while any(Q):
             min_dist = np.inf
             min_index = None
-            for i in [vertex.pos for vertex in Q if vertex]:
+            valid_indexes = [vertex.pos for vertex in Q if vertex]
+            for i in valid_indexes:
                 if dist[i] <= min_dist:
                     min_dist = dist[i]
                     min_index = i
@@ -32,6 +33,8 @@ class Dijkstra:
     @staticmethod
     def build_path(graph, prevs):
         current_index = graph.end_index
+        if prevs[current_index] is None:
+            return []
         path = [graph.vertices[graph.end]]
         while current_index != graph.start_index:
             path.insert(0, prevs[current_index])

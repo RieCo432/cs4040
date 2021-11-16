@@ -3,6 +3,7 @@ import numpy as np
 from Edge import Edge
 from Vertex import Vertex
 import pickle
+import sys
 
 
 class Graph:
@@ -27,7 +28,7 @@ class Graph:
         self.vertices[x, y] = Vertex(x * self.vertices.shape[0] + y)
 
     def remove_vertex(self, x, y):
-        self.vertices[x, y].color = (0, 0, 0)
+        self.vertices[x, y].blocked = True
         if x > 0:
             #self.edges.remove(self.vertices[x, y].west)
             self.vertices[x, y].west = None
@@ -73,7 +74,17 @@ class Graph:
         elif to_y < from_y:
             self.vertices[from_x, from_y].north = new_edge
 
-        self.update_edges()
+        self.vertices[from_x, from_y].update_edges()
+
+    def remove_edge(self, from_x, from_y, to_x, to_y):
+        if to_x > from_x:
+            self.vertices[from_x, from_y].east = None
+        elif to_x < from_x:
+            self.vertices[from_x, from_y].west = None
+        elif to_y > from_y:
+            self.vertices[from_x, from_y].south = None
+        elif to_y < from_y:
+            self.vertices[from_x, from_y].north = None
 
     def get_vertex_coordinates(self, vertex):
         y = vertex.pos % self.vertices.shape[0]
@@ -87,10 +98,12 @@ class Graph:
 
         for x in range(self.vertices.shape[0]):
             for y in range(self.vertices.shape[1]):
-                if path is None or self.vertices[x, y] not in path:
-                    color = self.vertices[x, y].color
-                elif path is not None and self.vertices[x, y] in path:
-                    color = (0, 0, 255)
+                if (x, y) == self.start:
+                    color = (0, 255, 255)
+                elif (x, y) == self.end:
+                    color = (255, 0, 255)
+                else:
+                    color = self.vertices[x, y].get_color()
 
                 image[4 * x, 4 * y] = color
                 image[4 * x, 4 * y + 1] = color
@@ -131,6 +144,10 @@ class Graph:
             color = (0, 0, 255)
             for i in range(len(path)-1):
                 x, y = self.get_vertex_coordinates(path[i])
+                image[4 * x, 4 * y] = color
+                image[4 * x, 4 * y + 1] = color
+                image[4 * x + 1, 4 * y] = color
+                image[4 * x + 1, 4 * y + 1] = color
                 if path[i].north is not None and path[i].north.to_vertex == path[i+1]:
                     image[4 * x, 4 * y - 1] = color
                     image[4 * x, 4 * y - 2] = color
@@ -145,11 +162,12 @@ class Graph:
                     image[4 * x - 2, 4 * y + 1] = color
 
         image = np.flip(np.rot90(image, k=3, axes=(0, 1)), axis=1)
-        plt.imshow(image)
+        plt.imshow(image, interpolation=None)
         plt.show()
 
     @staticmethod
     def save_graph(graph, filename):
+        sys.setrecursionlimit(10000)
         with open("graphs/"+filename+".pickle", "wb") as outfile:
             pickle.dump(graph, outfile)
 

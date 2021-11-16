@@ -7,7 +7,7 @@ class Vertex:
         self.west = None
         self.edges = []
         self.pos = pos
-        self.color = (255, 255, 255)
+        self.blocked = False
 
     def update_edges(self):
         self.edges = [edge for edge in [self.north, self.east, self.south, self.west] if edge is not None]
@@ -16,3 +16,9 @@ class Vertex:
         for edge in self.edges:
             if edge.to_vertex == to_vertex:
                 return edge.weight
+
+    def get_color(self):
+        if not self.blocked:
+            return (255, 255, 255)
+        else:
+            return (0, 0, 0)

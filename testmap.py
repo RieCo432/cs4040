@@ -51,6 +51,7 @@ g.add_edge(2, 2, 1, 2, 240)
 
 g.remove_vertex(1, 0)
 g.remove_vertex(1, 1)
+g.remove_vertex(1, 2)
 
 g.show_graph()
 
@@ -58,4 +59,7 @@ Graph.save_graph(g, "test")
 
 dists, prevs = Dijkstra.solve(g)
 path = Dijkstra.build_path(g, prevs)
-g.show_graph(path=path)
+if len(path) == 0:
+    print("No path found")
+else:
+    g.show_graph(path=path)
