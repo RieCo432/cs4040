@@ -1,8 +1,8 @@
 class Edge:
 
-    def __init__(self, from_node, to_node, weight):
-        self.from_node = from_node
-        self.to_note = to_node
+    def __init__(self, from_vertex, to_vertex, weight):
+        self.from_vertex = from_vertex
+        self.to_vertex = to_vertex
         self.weight = weight
 
     def get_color(self):

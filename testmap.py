@@ -1,12 +1,11 @@
 from Graph import Graph
-from Node import Node
-
+from algorithms import Dijkstra
 
 g = Graph(3, 3)
 
 for i in range(3):
     for j in range(3):
-        g.add_node(i, j)
+        g.add_vertex(i, j)
 
 # Node 0,0
 g.add_edge(0, 0, 1, 0, 0)
@@ -52,5 +51,18 @@ g.add_edge(2, 2, 1, 2, 240)
 
 g.show_graph()
 
-Graph.save_graph(g, "actual")
+Graph.save_graph(g, "test")
 
+dists, prevs = Dijkstra(g)
+#print(prevs)
+#print([g.get_vertex_coordinates(vertex) for vertex in prevs if vertex is not None])
+
+current_index = g.end_index
+path = [g.vertices[g.end]]
+print(dists[current_index])
+while current_index != g.start_index:
+    path.insert(0, prevs[current_index])
+    current_index = prevs[current_index].pos
+
+print(path)
+g.show_graph(path=path)
