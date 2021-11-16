@@ -1,27 +1,39 @@
 import numpy as np
 
 
-def Dijkstra(graph):
-    dist = np.full(graph.vertices.flatten().shape, np.inf)
-    Q = np.array([vertex for vertex in graph.vertices.flatten()])
-    prev = np.full(graph.vertices.flatten().shape, None)
-    dist[graph.vertices[graph.start].pos] = 0
+class Dijkstra:
 
-    while any(Q):
-        min_dist = np.inf
-        min_index = None
-        for i in [vertex.pos for vertex in Q if vertex]:
-            if dist[i] < min_dist:
-                min_dist = dist[i]
-                min_index = i
+    @staticmethod
+    def solve(graph):
+        dist = np.full(graph.vertices.flatten().shape, np.inf)
+        Q = np.array([vertex for vertex in graph.vertices.flatten()])
+        prev = np.full(graph.vertices.flatten().shape, None)
+        dist[graph.vertices[graph.start].pos] = 0
 
-        u = Q[min_index]
-        Q[u.pos] = False
+        while any(Q):
+            min_dist = np.inf
+            min_index = None
+            for i in [vertex.pos for vertex in Q if vertex]:
+                if dist[i] <= min_dist:
+                    min_dist = dist[i]
+                    min_index = i
 
-        for v in [edge.to_vertex for edge in u.edges if edge.to_vertex in Q]:
-            alt = dist[u.pos] + u.get_weight_to(v)
-            if alt < dist[v.pos]:
-                dist[v.pos] = alt
-                prev[v.pos] = u
+            u = Q[min_index]
+            Q[u.pos] = False
 
-    return dist, prev
+            for v in [edge.to_vertex for edge in u.edges if edge.to_vertex in Q]:
+                alt = dist[u.pos] + u.get_weight_to(v)
+                if alt < dist[v.pos]:
+                    dist[v.pos] = alt
+                    prev[v.pos] = u
+
+        return dist, prev
+
+    @staticmethod
+    def build_path(graph, prevs):
+        current_index = graph.end_index
+        path = [graph.vertices[graph.end]]
+        while current_index != graph.start_index:
+            path.insert(0, prevs[current_index])
+            current_index = prevs[current_index].pos
+        return path

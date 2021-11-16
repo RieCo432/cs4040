@@ -49,20 +49,13 @@ g.add_edge(1, 2, 0, 2, 220)
 g.add_edge(2, 2, 2, 1, 230)
 g.add_edge(2, 2, 1, 2, 240)
 
+g.remove_vertex(1, 0)
+g.remove_vertex(1, 1)
+
 g.show_graph()
 
 Graph.save_graph(g, "test")
 
-dists, prevs = Dijkstra(g)
-#print(prevs)
-#print([g.get_vertex_coordinates(vertex) for vertex in prevs if vertex is not None])
-
-current_index = g.end_index
-path = [g.vertices[g.end]]
-print(dists[current_index])
-while current_index != g.start_index:
-    path.insert(0, prevs[current_index])
-    current_index = prevs[current_index].pos
-
-print(path)
+dists, prevs = Dijkstra.solve(g)
+path = Dijkstra.build_path(g, prevs)
 g.show_graph(path=path)

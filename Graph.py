@@ -9,7 +9,7 @@ class Graph:
 
     def __init__(self, width, height):
         self.vertices = np.ndarray((width, height), dtype='object')
-        self.edges = []
+        # self.edges = []
         self.start = (0, 0)
         self.start_index = 0
         self.end = (width-1, height-1)
@@ -26,6 +26,35 @@ class Graph:
     def add_vertex(self, x, y):
         self.vertices[x, y] = Vertex(x * self.vertices.shape[0] + y)
 
+    def remove_vertex(self, x, y):
+        self.vertices[x, y].color = (0, 0, 0)
+        if x > 0:
+            #self.edges.remove(self.vertices[x, y].west)
+            self.vertices[x, y].west = None
+            #self.edges.remove(self.vertices[x - 1, y].east)
+            self.vertices[x - 1, y].east = None
+        if x < self.vertices.shape[0] - 1:
+            #self.edges.remove(self.vertices[x, y].east)
+            self.vertices[x, y].east = None
+            #self.edges.remove(self.vertices[x+1, y].west)
+            self.vertices[x + 1, y].west = None
+        if y > 0:
+            #self.edges.remove(self.vertices[x, y].north)
+            self.vertices[x, y].north = None
+            #self.edges.remove(self.vertices[x, y-1].south)
+            self.vertices[x, y - 1].south = None
+        if y < self.vertices.shape[1] - 1:
+            #self.edges.remove(self.vertices[x, y].south)
+            self.vertices[x, y].south = None
+            #self.edges.remove(self.vertices[x, y+1].north)
+            self.vertices[x, y + 1].north = None
+
+        self.update_edges()
+
+    def update_edges(self):
+        for vertex in self.vertices.flatten():
+            vertex.update_edges()
+
     def add_edge(self, from_x, from_y, to_x, to_y, weight):
         if to_x < 0 or from_x < 0 or to_y < 0 or from_y < 0:
             print("Point outside of map")
@@ -34,7 +63,7 @@ class Graph:
             print("Cannot connect nodes further than 1 apart")
             return
         new_edge = Edge(self.vertices[from_x, from_y], self.vertices[to_x, to_y], weight)
-        self.edges.append(new_edge)
+        #self.edges.append(new_edge)
         if to_x > from_x:
             self.vertices[from_x, from_y].east = new_edge
         elif to_x < from_x:
@@ -44,7 +73,7 @@ class Graph:
         elif to_y < from_y:
             self.vertices[from_x, from_y].north = new_edge
 
-        self.vertices[from_x, from_y].update_edges()
+        self.update_edges()
 
     def get_vertex_coordinates(self, vertex):
         y = vertex.pos % self.vertices.shape[0]
