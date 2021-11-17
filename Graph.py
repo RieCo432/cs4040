@@ -91,7 +91,7 @@ class Graph:
         x = (vertex.pos - y) // self.vertices.shape[0]
         return (x, y)
 
-    def show_graph(self, path=None):
+    def show_graph(self, path=None, title=None):
         width = 4 * self.vertices.shape[0] - 2
         height = 4 * self.vertices.shape[1] - 2
         image = np.zeros((width, height, 3), dtype=int)
@@ -162,6 +162,8 @@ class Graph:
                     image[4 * x - 2, 4 * y + 1] = color
 
         image = np.flip(np.rot90(image, k=3, axes=(0, 1)), axis=1)
+        if title is not None:
+            plt.title(title)
         plt.imshow(image, interpolation=None)
         plt.show()
 

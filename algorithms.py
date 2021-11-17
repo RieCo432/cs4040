@@ -78,7 +78,6 @@ class AStar:
     @staticmethod
     def build_path(cameFrom, current, graph):
         path = [current]
-        print([graph.get_vertex_coordinates(v) if v is not None else None for v in cameFrom])
         while cameFrom[current.pos] is not None:
             current = cameFrom[current.pos]
             path.insert(0, current)

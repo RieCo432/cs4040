@@ -42,12 +42,8 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
                 if random() < hard_obstacles_density:
                     g.remove_vertex(x, y)
 
-        # g.show_graph()
-
         path, dist = Dijkstra.solve(g)
-        print("Dijkstra", dist)
 
-    g.show_graph(path=path)
     Graph.save_graph(g, "test")
 
     return g
@@ -57,7 +53,8 @@ if __name__ == "__main__":
     g = generate_graph(5, 5, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
     g.show_graph()
 
+    path, dist = Dijkstra.solve(g)
+    g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
+
     path, dist = AStar.solve(g)
-    print(path)
-    print("A*", dist)
-    g.show_graph(path=path)
+    g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
