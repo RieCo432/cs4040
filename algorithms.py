@@ -1,5 +1,5 @@
 import numpy as np
-
+from operator import attrgetter
 
 class Dijkstra:
 
@@ -28,7 +28,7 @@ class Dijkstra:
                     dist[v.pos] = alt
                     prev[v.pos] = u
 
-        return dist, prev
+        return Dijkstra.build_path(graph, prev), dist[graph.end_index]
 
     @staticmethod
     def build_path(graph, prevs):
@@ -40,3 +40,48 @@ class Dijkstra:
             path.insert(0, prevs[current_index])
             current_index = prevs[current_index].pos
         return path
+
+
+class AStar:
+
+    @staticmethod
+    def solve(graph):
+        def h(from_coordinate):
+            return ((
+                    abs(from_coordinate[0] - graph.end[0])
+                    + abs(from_coordinate[1] - graph.end[1])
+            ) * 10)
+        openSet = [graph.vertices[graph.start]]
+        cameFrom = np.full(graph.vertices.flatten().shape, None)
+        gScore = np.full(graph.vertices.flatten().shape, np.inf)
+        gScore[graph.start_index] = 0
+        fScore = np.full(graph.vertices.flatten().shape, np.inf)
+        fScore[graph.start_index] = h(graph.start)
+
+        while len(openSet) > 0:
+            current = min(openSet, key=lambda v: fScore[v.pos])
+            if current.pos == graph.end_index:
+                return AStar.build_path(cameFrom, current, graph), fScore[graph.end_index]
+            openSet.remove(current)
+            for edge in current.edges:
+                tentative_gScore = gScore[current.pos] + edge.weight
+                if tentative_gScore < gScore[edge.to_vertex.pos]:
+                    cameFrom[edge.to_vertex.pos] = current
+                    gScore[edge.to_vertex.pos] = tentative_gScore
+                    fScore[edge.to_vertex.pos] = gScore[edge.to_vertex.pos] + h(graph.get_vertex_coordinates(edge.to_vertex))
+
+                    if edge.to_vertex not in openSet:
+                        openSet.append(edge.to_vertex)
+
+        return [], None
+
+    @staticmethod
+    def build_path(cameFrom, current, graph):
+        path = [current]
+        print([graph.get_vertex_coordinates(v) if v is not None else None for v in cameFrom])
+        while cameFrom[current.pos] is not None:
+            current = cameFrom[current.pos]
+            path.insert(0, current)
+        return path
+
+

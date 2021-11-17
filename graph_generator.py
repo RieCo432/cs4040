@@ -1,5 +1,5 @@
 from Graph import Graph
-from algorithms import Dijkstra
+from algorithms import Dijkstra, AStar
 from random import random, randint
 import numpy as np
 
@@ -42,14 +42,22 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
                 if random() < hard_obstacles_density:
                     g.remove_vertex(x, y)
 
-        g.show_graph()
+        # g.show_graph()
 
-        dists, prevs = Dijkstra.solve(g)
-        path = Dijkstra.build_path(g, prevs)
+        path, dist = Dijkstra.solve(g)
+        print("Dijkstra", dist)
 
     g.show_graph(path=path)
     Graph.save_graph(g, "test")
 
+    return g
+
 
 if __name__ == "__main__":
-    generate_graph(30, 30, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
+    g = generate_graph(5, 5, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
+    g.show_graph()
+
+    path, dist = AStar.solve(g)
+    print(path)
+    print("A*", dist)
+    g.show_graph(path=path)
