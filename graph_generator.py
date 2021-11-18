@@ -1,10 +1,10 @@
 from Graph import Graph
-from algorithms import Dijkstra, AStar
+from algorithms import Dijkstra, AStar, HPAStar
 from random import random, randint
 import numpy as np
 
 
-def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_density=0.0): #, soft_obstacle_min=0, soft_obstacle_max=255, distribution="equal"):
+def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_density=0.0):  #, soft_obstacle_min=0, soft_obstacle_max=255, distribution="equal"):
 
     g = None
     path = []
@@ -43,6 +43,7 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
                     g.remove_vertex(x, y)
 
         path, dist = Dijkstra.solve(g)
+        g.show_graph()
 
     Graph.save_graph(g, "test")
 
@@ -50,11 +51,13 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
 
 if __name__ == "__main__":
-    g = generate_graph(5, 5, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
+    g = generate_graph(15, 15, hard_obstacles_density=0.1, soft_obstacles_density=0.5)
     g.show_graph()
 
-    path, dist = Dijkstra.solve(g)
-    g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
+    HPAStar.breakupGraph(g)
 
-    path, dist = AStar.solve(g)
-    g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
+    #path, dist = Dijkstra.solve(g)
+    #g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
+
+    #path, dist = AStar.solve(g)
+    #g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))

@@ -1,5 +1,7 @@
 import numpy as np
 from operator import attrgetter
+from math import floor
+from Graph import Graph
 
 class Dijkstra:
 
@@ -61,7 +63,7 @@ class AStar:
         while len(openSet) > 0:
             current = min(openSet, key=lambda v: fScore[v.pos])
             if current.pos == graph.end_index:
-                return AStar.build_path(cameFrom, current, graph), fScore[graph.end_index]
+                return AStar.build_path(cameFrom, current), fScore[graph.end_index]
             openSet.remove(current)
             for edge in current.edges:
                 tentative_gScore = gScore[current.pos] + edge.weight
@@ -76,7 +78,7 @@ class AStar:
         return [], None
 
     @staticmethod
-    def build_path(cameFrom, current, graph):
+    def build_path(cameFrom, current):
         path = [current]
         while cameFrom[current.pos] is not None:
             current = cameFrom[current.pos]
@@ -84,3 +86,95 @@ class AStar:
         return path
 
 
+class HPAStar:
+
+    chunksize = 5
+
+    @staticmethod
+    def breakupGraph(graph):
+        exchange_vertices = [graph.start, graph.end]
+        chunk_outs = np.full((int(graph.vertices.shape[0] / HPAStar.chunksize), int(graph.vertices.shape[1] / HPAStar.chunksize)), None)
+        for x in range(0, graph.vertices.shape[0], HPAStar.chunksize):
+            for y in range(0, graph.vertices.shape[1], HPAStar.chunksize):
+                chunk_outs[x // HPAStar.chunksize, y // HPAStar.chunksize] = {}
+                mini_graph = Graph(5, 5)
+                mini_graph.vertices = graph.vertices[x:x+5, y:y+5]
+                mini_graph.show_graph()
+
+                chunknorthouts_all = [(x + i,y) if graph.vertices[x + i, y].north is not None else None for i in range(HPAStar.chunksize) ]
+                chunknorthouts = []
+                if any(chunknorthouts_all):
+                    start = None
+                    for i in range(HPAStar.chunksize):
+                        if chunknorthouts_all[i] is not None and start is None:
+                            start = i
+                        if (i == HPAStar.chunksize - 1 or chunknorthouts_all[i+1] is None) and start is not None:
+                            chunknorthouts.append(graph.get_vertex_coordinates(min(
+                                [graph.vertices[chunknorthouts_all[c]] for c in range(start, i+1)],
+                                key=lambda v: v.north.weight)))
+                            start = None
+
+                    #for p in chunknorthouts:
+                    #    if p is not None:
+                    #        graph.vertices[p].north.weight = 255
+                chunk_outs[x//HPAStar.chunksize, y//HPAStar.chunksize]["north"] = chunknorthouts
+
+                chunksouthouts_all = [(x + i, y+4) if graph.vertices[x + i, y+4].south is not None else None for i in range(HPAStar.chunksize)]
+                chunksouthouts = []
+                if any(chunksouthouts_all):
+                    start = None
+                    for i in range(HPAStar.chunksize):
+                        if chunksouthouts_all[i] is not None and start is None:
+                            start = i
+                        if (i == HPAStar.chunksize - 1 or chunksouthouts_all[i + 1] is None) and start is not None:
+                            chunksouthouts.append(graph.get_vertex_coordinates(min(
+                                [graph.vertices[chunksouthouts_all[c]] for c in range(start, i + 1)],
+                                key=lambda v: v.south.weight)))
+                            start = None
+
+                    # for p in chunksouthouts:
+                    #     if p is not None:
+                    #         graph.vertices[p].south.weight = 255
+
+                chunk_outs[x // HPAStar.chunksize, y // HPAStar.chunksize]["south"] = chunksouthouts
+
+
+                chunkwestouts_all = [(x, y + i) if graph.vertices[x, y + i].west is not None else None for i in range(HPAStar.chunksize)]
+                chunkwestouts = []
+                if any(chunkwestouts_all):
+                    start = None
+                    for i in range(HPAStar.chunksize):
+                        if chunkwestouts_all[i] is not None and start is None:
+                            start = i
+                        if (i == HPAStar.chunksize - 1 or chunkwestouts_all[i + 1] is None) and start is not None:
+                            chunkwestouts.append(graph.get_vertex_coordinates(min(
+                                [graph.vertices[chunkwestouts_all[c]] for c in range(start, i + 1)],
+                                key=lambda v: v.west.weight)))
+                            start = None
+
+                    # for p in chunkwestouts:
+                    #     if p is not None:
+                    #         graph.vertices[p].west.weight = 255
+
+                chunk_outs[x // HPAStar.chunksize, y // HPAStar.chunksize]["west"] = chunkwestouts
+
+                chunkeastouts_all = [(x+4, y + i) if graph.vertices[x+4, y + i].east is not None else None for i in range(HPAStar.chunksize)]
+                chunkeastouts = []
+                if any(chunkeastouts_all):
+                    start = None
+                    for i in range(HPAStar.chunksize):
+                        if chunkeastouts_all[i] is not None and start is None:
+                            start = i
+                        if (i == HPAStar.chunksize - 1 or chunkeastouts_all[i + 1] is None) and start is not None:
+                            chunkeastouts.append(graph.get_vertex_coordinates(min(
+                                [graph.vertices[chunkeastouts_all[c]] for c in range(start, i + 1)],
+                                key=lambda v: v.east.weight)))
+                            start = None
+
+                    # for p in chunkeastouts:
+                    #     if p is not None:
+                    #         graph.vertices[p].east.weight = 255
+
+                chunk_outs[x // HPAStar.chunksize, y // HPAStar.chunksize]["east"] = chunkeastouts
+
+        graph.show_graph()
