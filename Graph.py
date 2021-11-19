@@ -39,27 +39,23 @@ class Graph:
         if (x, y) != self.start and (x, y) != self.end:
             self.vertices[x, y].blocked = True
             if x > 0:
-                #self.edges.remove(self.vertices[x, y].west)
                 self.vertices[x, y].west = None
-                #self.edges.remove(self.vertices[x - 1, y].east)
                 self.vertices[x - 1, y].east = None
+                self.vertices[x - 1, y].update_edges()
             if x < self.vertices.shape[0] - 1:
-                #self.edges.remove(self.vertices[x, y].east)
                 self.vertices[x, y].east = None
-                #self.edges.remove(self.vertices[x+1, y].west)
                 self.vertices[x + 1, y].west = None
+                self.vertices[x + 1, y].update_edges()
             if y > 0:
-                #self.edges.remove(self.vertices[x, y].north)
                 self.vertices[x, y].north = None
-                #self.edges.remove(self.vertices[x, y-1].south)
                 self.vertices[x, y - 1].south = None
+                self.vertices[x, y - 1].update_edges()
             if y < self.vertices.shape[1] - 1:
-                #self.edges.remove(self.vertices[x, y].south)
                 self.vertices[x, y].south = None
-                #self.edges.remove(self.vertices[x, y+1].north)
                 self.vertices[x, y + 1].north = None
+                self.vertices[x, y + 1].update_edges()
 
-            self.update_edges()
+            self.vertices[x, y].update_edges()
             return True
         else:
             return False

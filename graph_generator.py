@@ -17,12 +17,15 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
     while len(path) == 0:
 
+        print("Instantiating Graph")
         g = Graph(width, height)
 
+        print("Adding vertices")
         for x in range(width):
             for y in range(height):
                 g.add_vertex(x, y)
 
+        print("Adding edges")
         for x in range(width):
             for y in range(height):
                 if x > 0:
@@ -34,17 +37,21 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
                 if y < height -1:
                     g.add_edge(x, y, x, y+1, generate_weight())
 
+        print("Blocking vertices")
         for x in range(width):
             for y in range(height):
                 if random() < hard_obstacles_density:
                     g.remove_vertex(x, y)
 
+        print("Setting start and end")
         while not g.set_start(randint(0, width // 2), randint(0, height // 2)):
             pass
         while not g.set_end(randint(width // 2, width - 1), randint(height // 2, height - 1)):
             pass
 
-        path, dist = Dijkstra.solve(g)
+        print("Checking path existence")
+        #path, dist = Dijkstra.solve(g)
+        path, dist = AStar.solve(g)
 
     g.show_graph()
     Graph.save_graph(g, "test")
