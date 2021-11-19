@@ -12,21 +12,20 @@ class Dijkstra:
         dist[graph.vertices[graph.start].pos] = 0
 
         while any(Q):
-            # left = len([1 for v in Q if v])
-            # if left % 1000 == 0:
-            #     print(left, "vertices to go")
+            left = len([1 for v in Q if v])
+            if left % 1000 == 0:
+                print(left, "vertices to go")
             min_dist = np.inf
             min_index = None
-            valid_indexes = [vertex.pos for vertex in Q if vertex]
-            for i in valid_indexes:
-                if dist[i] <= min_dist:
-                    min_dist = dist[i]
-                    min_index = i
+            for v in Q[np.where(Q)]:
+                if dist[v.pos] <= min_dist:
+                    min_dist = dist[v.pos]
+                    min_index = v.pos
 
             u = Q[min_index]
             Q[u.pos] = False
 
-            for v in [edge.to_vertex for edge in u.edges if edge.to_vertex in Q]:
+            for v in [edge.to_vertex for edge in u.edges if Q[edge.to_vertex.pos]]:
                 alt = dist[u.pos] + u.get_weight_to(v)
                 if alt < dist[v.pos]:
                     dist[v.pos] = alt
@@ -90,7 +89,7 @@ class AStar:
 
 class HPAStar:
 
-    chunksize = 5
+    chunksize = 10
 
     @staticmethod
     def solve(graph):
@@ -106,8 +105,8 @@ class HPAStar:
 
         for x in range(0, graph.vertices.shape[0], HPAStar.chunksize):
             for y in range(0, graph.vertices.shape[1], HPAStar.chunksize):
+
                 mini_graph = Graph(HPAStar.chunksize, HPAStar.chunksize)
-                #mini_graph.vertices = deepcopy(graph.vertices[x:x+HPAStar.chunksize, y:y+HPAStar.chunksize])
                 for i in range(mini_graph.vertices.shape[0]):
                     for j in range(mini_graph.vertices.shape[1]):
                         mini_graph.add_vertex(i, j)
@@ -124,6 +123,11 @@ class HPAStar:
                             mini_graph.add_edge(i, j, i + 1, j, graph.vertices[x+i, y+j].east.weight)
 
                         mini_graph.vertices[i, j].update_edges()
+
+                for i in range(mini_graph.vertices.shape[0]):
+                    for j in range(mini_graph.vertices.shape[1]):
+                        if graph.vertices[x+i, y+j].blocked:
+                            mini_graph.remove_vertex(i, j)
 
                 chunks[x // HPAStar.chunksize, y // HPAStar.chunksize] = mini_graph
 
@@ -242,3 +246,27 @@ class HPAStar:
                 path.append(vertex)
 
         return path, dist
+
+# class FringeSearch:
+#
+#     @staticmethod
+#     def solve(graph):
+#         def h(from_coordinate):
+#             return ((
+#                             abs(from_coordinate[0] - graph.end[0])
+#                             + abs(from_coordinate[1] - graph.end[1])
+#                     ) * 10)
+#
+#         F = []
+#         C = []
+#         C[graph.start_index] = (0, None)
+#         flimit = h(graph.start)
+#         found = False
+#
+#         while not found and len(F) > 0:
+#             fmin = np.inf
+#             for vertex in
+#
+#
+#     @staticmethod
+#     def build_path():

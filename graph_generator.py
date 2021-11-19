@@ -2,9 +2,10 @@ from Graph import Graph
 from algorithms import Dijkstra, AStar, HPAStar
 from random import random, randint
 import numpy as np
+from datetime import datetime
 
 
-def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_density=0.0):  #, soft_obstacle_min=0, soft_obstacle_max=255, distribution="equal"):
+def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_density=0.0, name=None):  #, soft_obstacle_min=0, soft_obstacle_max=255, distribution="equal"):
 
     g = None
     path = []
@@ -54,16 +55,23 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
         path, dist = AStar.solve(g)
 
     g.show_graph()
-    Graph.save_graph(g, "test")
+    if name is None:
+        Graph.save_graph(g, "test")
+    else:
+        Graph.save_graph(g, name)
 
     return g
 
 
 if __name__ == "__main__":
     if True:
-        g = generate_graph(1000, 1000, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
+        g = generate_graph(200, 200, hard_obstacles_density=0.3, soft_obstacles_density=0.7)
 
+        start = datetime.now()
         path, dist = Dijkstra.solve(g)
+        end = datetime.now()
+        elapsed = (end - start).total_seconds()
+        print(elapsed)
         g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
         print("{:10s}{:10.2f}".format("Dijkstra", dist))
 
