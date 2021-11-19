@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Edge import Edge
 from Vertex import Vertex
-import pickle
-import sys
+import json
 
 
 class Graph:
@@ -173,11 +172,52 @@ class Graph:
 
     @staticmethod
     def save_graph(graph, filename):
-        sys.setrecursionlimit(11000)
-        with open("graphs/"+filename+".pickle", "wb") as outfile:
-            pickle.dump(graph, outfile)
+        d = {}
+
+        d["width"] = graph.vertices.shape[0]
+        d["height"] = graph.vertices.shape[1]
+
+        d["start"] = {}
+        d["start"]["x"] = graph.start[0]
+        d["start"]["y"] = graph.start[1]
+
+        d["end"] = {}
+        d["end"]["x"] = graph.end[0]
+        d["end"]["y"] = graph.end[1]
+
+        d["blocked_nodes"] = []
+        d["edges"] = []
+
+        for x in range(graph.vertices.shape[0]):
+            for y in range(graph.vertices.shape[1]):
+                if graph.vertices[x, y].blocked:
+                    d["blocked_nodes"].append({"x": x, "y": y})
+                else:
+                    for edge in graph.vertices[x, y].edges:
+                        to_x, to_y = graph.get_vertex_coordinates(edge.to_vertex)
+                        d["edges"].append({"from_x": x, "from_y": y, "to_x": to_x, "to_y": to_y, "weight": edge.weight})
+
+        with open("graphs/"+filename+".json", "w") as outfile:
+            json.dump(d, outfile)
 
     @staticmethod
     def load_graph(filename):
-        with open("graphs/"+filename+".pickle", "rb") as infile:
-            return pickle.load(infile)
+        with open("graphs/"+filename+".json", "r") as infile:
+            d = json.load(infile)
+
+        graph = Graph(d["width"], d["height"])
+
+        for x in range(graph.vertices.shape[0]):
+            for y in range(graph.vertices.shape[1]):
+                graph.add_vertex(x, y)
+
+        for blocked_vertex in d["blocked_nodes"]:
+            graph.remove_vertex(blocked_vertex["x"], blocked_vertex["y"])
+
+        graph.set_start(d["start"]["x"], d["start"]["y"])
+        graph.set_end(d["end"]["x"], d["end"]["y"])
+
+        for edge in d["edges"]:
+            graph.add_edge(edge["from_x"], edge["from_y"], edge["to_x"], edge["to_y"], edge["weight"])
+
+        return graph

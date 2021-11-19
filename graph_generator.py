@@ -51,8 +51,8 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
 
 if __name__ == "__main__":
-    while True:
-        g = generate_graph(100, 100, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
+    if True:
+        g = generate_graph(10, 10, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
 
         path, dist = Dijkstra.solve(g)
         g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))

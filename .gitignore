@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .idea/*
-graphs/test*.pickle
+graphs/test*.json
 
 # C extensions
 *.so
