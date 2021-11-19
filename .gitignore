@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .idea/*
 graphs/*.json
+results.json
 
 # C extensions
 *.so
