@@ -12,6 +12,9 @@ class Dijkstra:
         dist[graph.vertices[graph.start].pos] = 0
 
         while any(Q):
+            left = len([1 for v in Q if v])
+            if left % 1000 == 0:
+                print(left, "vertices to go")
             min_dist = np.inf
             min_index = None
             valid_indexes = [vertex.pos for vertex in Q if vertex]

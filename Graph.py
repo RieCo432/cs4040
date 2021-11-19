@@ -16,41 +16,53 @@ class Graph:
         self.end_index = (width-1) * width + (height-1)
 
     def set_start(self, x, y):
-        self.start = (x, y)
-        self.start_index = x * self.vertices.shape[0] + y
+        if not self.vertices[x, y].blocked:
+            self.start = (x, y)
+            self.start_index = x * self.vertices.shape[0] + y
+            return True
+        else:
+            return False
 
     def set_end(self, x, y):
-        self.end = (x, y)
-        self.end_index = x * self.vertices.shape[0] + y
+        if not self.vertices[x, y].blocked:
+            self.end = (x, y)
+            self.end_index = x * self.vertices.shape[0] + y
+            return True
+        else:
+            return False
 
     def add_vertex(self, x, y):
         if self.vertices[x, y] is None:
             self.vertices[x, y] = Vertex(x * self.vertices.shape[0] + y)
 
     def remove_vertex(self, x, y):
-        self.vertices[x, y].blocked = True
-        if x > 0:
-            #self.edges.remove(self.vertices[x, y].west)
-            self.vertices[x, y].west = None
-            #self.edges.remove(self.vertices[x - 1, y].east)
-            self.vertices[x - 1, y].east = None
-        if x < self.vertices.shape[0] - 1:
-            #self.edges.remove(self.vertices[x, y].east)
-            self.vertices[x, y].east = None
-            #self.edges.remove(self.vertices[x+1, y].west)
-            self.vertices[x + 1, y].west = None
-        if y > 0:
-            #self.edges.remove(self.vertices[x, y].north)
-            self.vertices[x, y].north = None
-            #self.edges.remove(self.vertices[x, y-1].south)
-            self.vertices[x, y - 1].south = None
-        if y < self.vertices.shape[1] - 1:
-            #self.edges.remove(self.vertices[x, y].south)
-            self.vertices[x, y].south = None
-            #self.edges.remove(self.vertices[x, y+1].north)
-            self.vertices[x, y + 1].north = None
+        if (x, y) != self.start and (x, y) != self.end:
+            self.vertices[x, y].blocked = True
+            if x > 0:
+                #self.edges.remove(self.vertices[x, y].west)
+                self.vertices[x, y].west = None
+                #self.edges.remove(self.vertices[x - 1, y].east)
+                self.vertices[x - 1, y].east = None
+            if x < self.vertices.shape[0] - 1:
+                #self.edges.remove(self.vertices[x, y].east)
+                self.vertices[x, y].east = None
+                #self.edges.remove(self.vertices[x+1, y].west)
+                self.vertices[x + 1, y].west = None
+            if y > 0:
+                #self.edges.remove(self.vertices[x, y].north)
+                self.vertices[x, y].north = None
+                #self.edges.remove(self.vertices[x, y-1].south)
+                self.vertices[x, y - 1].south = None
+            if y < self.vertices.shape[1] - 1:
+                #self.edges.remove(self.vertices[x, y].south)
+                self.vertices[x, y].south = None
+                #self.edges.remove(self.vertices[x, y+1].north)
+                self.vertices[x, y + 1].north = None
 
-        self.update_edges()
+            self.update_edges()
+            return True
+        else:
+            return False
 
     def update_edges(self):
         for vertex in self.vertices.flatten():

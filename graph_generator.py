@@ -19,9 +19,6 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
         g = Graph(width, height)
 
-        g.set_start(randint(0, width // 2), randint(0, height // 2))
-        g.set_end(randint(width // 2, width - 1), randint(height // 2, height - 1))
-
         for x in range(width):
             for y in range(height):
                 g.add_vertex(x, y)
@@ -42,6 +39,11 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
                 if random() < hard_obstacles_density:
                     g.remove_vertex(x, y)
 
+        while not g.set_start(randint(0, width // 2), randint(0, height // 2)):
+            pass
+        while not g.set_end(randint(width // 2, width - 1), randint(height // 2, height - 1)):
+            pass
+
         path, dist = Dijkstra.solve(g)
 
     g.show_graph()
@@ -52,7 +54,7 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
 if __name__ == "__main__":
     if True:
-        g = generate_graph(10, 10, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
+        g = generate_graph(1000, 1000, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
 
         path, dist = Dijkstra.solve(g)
         g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
