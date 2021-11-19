@@ -43,21 +43,25 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
                     g.remove_vertex(x, y)
 
         path, dist = Dijkstra.solve(g)
-        g.show_graph()
 
+    g.show_graph()
     Graph.save_graph(g, "test")
 
     return g
 
 
 if __name__ == "__main__":
-    g = generate_graph(15, 15, hard_obstacles_density=0.1, soft_obstacles_density=0.5)
-    g.show_graph()
+    while True:
+        g = generate_graph(100, 100, hard_obstacles_density=0.2, soft_obstacles_density=0.5)
 
-    HPAStar.breakupGraph(g)
+        path, dist = Dijkstra.solve(g)
+        g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
+        print("{:10s}{:10.2f}".format("Dijkstra", dist))
 
-    #path, dist = Dijkstra.solve(g)
-    #g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
+        path, dist = AStar.solve(g)
+        g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
+        print("{:10s}{:10.2f}".format("A*", dist))
 
-    #path, dist = AStar.solve(g)
-    #g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
+        path, dist = HPAStar.solve(g)
+        g.show_graph(path=path, title="{:10s}{:10.2f}".format("HPA*", dist))
+        print("{:10s}{:10.2f}".format("HPA*", dist))

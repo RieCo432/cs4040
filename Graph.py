@@ -9,7 +9,7 @@ import sys
 class Graph:
 
     def __init__(self, width, height):
-        self.vertices = np.ndarray((width, height), dtype='object')
+        self.vertices = np.full((width, height), None)
         # self.edges = []
         self.start = (0, 0)
         self.start_index = 0
@@ -25,7 +25,8 @@ class Graph:
         self.end_index = x * self.vertices.shape[0] + y
 
     def add_vertex(self, x, y):
-        self.vertices[x, y] = Vertex(x * self.vertices.shape[0] + y)
+        if self.vertices[x, y] is None:
+            self.vertices[x, y] = Vertex(x * self.vertices.shape[0] + y)
 
     def remove_vertex(self, x, y):
         self.vertices[x, y].blocked = True
@@ -56,25 +57,28 @@ class Graph:
         for vertex in self.vertices.flatten():
             vertex.update_edges()
 
-    def add_edge(self, from_x, from_y, to_x, to_y, weight):
+    def add_edge(self, from_x, from_y, to_x, to_y, weight, allow_all=False):
         if to_x < 0 or from_x < 0 or to_y < 0 or from_y < 0:
             print("Point outside of map")
             return
-        if abs(to_x - from_x) + abs(to_y - from_y) > 1:
-            print("Cannot connect nodes further than 1 apart")
-            return
+        # if abs(to_x - from_x) + abs(to_y - from_y) > 1:
+        #     print("Cannot connect nodes further than 1 apart")
+        #     return
         new_edge = Edge(self.vertices[from_x, from_y], self.vertices[to_x, to_y], weight)
         #self.edges.append(new_edge)
-        if to_x > from_x:
-            self.vertices[from_x, from_y].east = new_edge
-        elif to_x < from_x:
-            self.vertices[from_x, from_y].west = new_edge
-        elif to_y > from_y:
-            self.vertices[from_x, from_y].south = new_edge
-        elif to_y < from_y:
-            self.vertices[from_x, from_y].north = new_edge
+        if not allow_all:
+            if to_x > from_x:
+                self.vertices[from_x, from_y].east = new_edge
+            elif to_x < from_x:
+                self.vertices[from_x, from_y].west = new_edge
+            elif to_y > from_y:
+                self.vertices[from_x, from_y].south = new_edge
+            elif to_y < from_y:
+                self.vertices[from_x, from_y].north = new_edge
 
-        self.vertices[from_x, from_y].update_edges()
+            self.vertices[from_x, from_y].update_edges()
+        else:
+            self.vertices[from_x, from_y].edges.append(new_edge)
 
     def remove_edge(self, from_x, from_y, to_x, to_y):
         if to_x > from_x:
@@ -88,7 +92,7 @@ class Graph:
 
     def get_vertex_coordinates(self, vertex):
         y = vertex.pos % self.vertices.shape[0]
-        x = (vertex.pos - y) // self.vertices.shape[0]
+        x = (vertex.pos - y) // self.vertices.shape[1]
         return (x, y)
 
     def show_graph(self, path=None, title=None):
@@ -169,7 +173,7 @@ class Graph:
 
     @staticmethod
     def save_graph(graph, filename):
-        sys.setrecursionlimit(10000)
+        sys.setrecursionlimit(11000)
         with open("graphs/"+filename+".pickle", "wb") as outfile:
             pickle.dump(graph, outfile)
 
