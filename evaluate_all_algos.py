@@ -12,6 +12,8 @@ with open("results.json", "r") as infile:
 algos = ["dijkstra", "astar", "hpastar"]
 runs_per_map = 25
 
+counter = 0
+
 for graph_size in graph_sizes:
     if "size"+str(graph_size) not in timings:
         timings["size"+str(graph_size)] = {}
@@ -57,6 +59,10 @@ for graph_size in graph_sizes:
                             "dists"].append(dist)
                         timings["size" + str(graph_size)]["hard" + str(style[0])]["soft" + str(style[1])][str(i)][algo][
                             "timings"].append((end - start).total_seconds())
+
+                    counter += 1
+                    if counter % 100 == 0:
+                        print("Counter:", counter)
 
                     with open("results.json", "w") as outfile:
                         json.dump(timings, outfile)
