@@ -1,5 +1,5 @@
 from Graph import Graph
-from algorithms import Dijkstra, AStar, HPAStar
+from algorithms import Dijkstra, AStar, HPAStar, FringeSearch
 from random import random, randint
 import numpy as np
 from datetime import datetime
@@ -65,7 +65,7 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
 if __name__ == "__main__":
     if True:
-        g = generate_graph(200, 200, hard_obstacles_density=0.3, soft_obstacles_density=0.7)
+        g = generate_graph(100, 100, hard_obstacles_density=0.3, soft_obstacles_density=0.7)
 
         start = datetime.now()
         path, dist = Dijkstra.solve(g)
@@ -82,3 +82,7 @@ if __name__ == "__main__":
         path, dist = HPAStar.solve(g)
         g.show_graph(path=path, title="{:10s}{:10.2f}".format("HPA*", dist))
         print("{:10s}{:10.2f}".format("HPA*", dist))
+
+        path, dist = FringeSearch.solve(g)
+        g.show_graph(path=path, title="{:10s}{:10.2f}".format("FringeSearch", dist))
+        print("{:10s}{:10.2f}".format("FringeSearch", dist))

@@ -102,6 +102,11 @@ class Graph:
         x = (vertex.pos - y) // self.vertices.shape[1]
         return (x, y)
 
+    def get_vertex_coordinates_from_pos(self, vertex_pos):
+        y = vertex_pos % self.vertices.shape[0]
+        x = (vertex_pos - y) // self.vertices.shape[1]
+        return (x, y)
+
     def show_graph(self, path=None, title=None):
         width = 4 * self.vertices.shape[0] - 2
         height = 4 * self.vertices.shape[1] - 2

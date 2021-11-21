@@ -1,5 +1,6 @@
 import numpy as np
 from Graph import Graph
+from DoubleLinkedList import DoubleLinkedList
 
 
 class Dijkstra:
@@ -89,11 +90,10 @@ class AStar:
 
 class HPAStar:
 
-    chunksize = 10
+    chunksize = 5
 
     @staticmethod
     def solve(graph):
-        exchange_vertices = [graph.start, graph.end]
         chunks = np.full((int(graph.vertices.shape[0] / HPAStar.chunksize), int(graph.vertices.shape[1] / HPAStar.chunksize)), None)
         chunk_outs = np.empty((int(graph.vertices.shape[0] / HPAStar.chunksize), int(graph.vertices.shape[1] / HPAStar.chunksize)), dtype=object)
         chunk_ins = np.empty((int(graph.vertices.shape[0] / HPAStar.chunksize), int(graph.vertices.shape[1] / HPAStar.chunksize)), dtype=object)
@@ -247,26 +247,64 @@ class HPAStar:
 
         return path, dist
 
-# class FringeSearch:
-#
-#     @staticmethod
-#     def solve(graph):
-#         def h(from_coordinate):
-#             return ((
-#                             abs(from_coordinate[0] - graph.end[0])
-#                             + abs(from_coordinate[1] - graph.end[1])
-#                     ) * 10)
-#
-#         F = []
-#         C = []
-#         C[graph.start_index] = (0, None)
-#         flimit = h(graph.start)
-#         found = False
-#
-#         while not found and len(F) > 0:
-#             fmin = np.inf
-#             for vertex in
-#
-#
-#     @staticmethod
-#     def build_path():
+class FringeSearch:
+
+    @staticmethod
+    def solve(graph):
+        def h(from_coordinate):
+            return ((
+                            abs(from_coordinate[0] - graph.end[0])
+                            + abs(from_coordinate[1] - graph.end[1])
+                    ) * 10)
+
+        F = DoubleLinkedList(graph.start_index)
+        C = np.full(graph.vertices.flatten().shape, None)
+        C[graph.start_index] = (0, None)
+        flimit = h(graph.start)
+        found = False
+
+        while not found and not F.is_empty():
+            fmin = np.inf
+            node = F.head
+            while node is not None:
+                (g, parent) = C[node.data]
+                f = g + h(graph.get_vertex_coordinates_from_pos(node.data))
+                if f > flimit:
+                    fmin = min(f, fmin)
+                    node = node.next
+                    continue
+                if node.data == graph.end_index:
+                    found = True
+                    break
+                for edge in graph.vertices[graph.get_vertex_coordinates_from_pos(node.data)].edges:
+                    g_child = g + edge.weight
+                    if C[edge.to_vertex.pos] is not None:
+                        (g_cached, parent) = C[edge.to_vertex.pos]
+                        if g_child >= g_cached:
+                            continue
+                    child_in_F = F.find(edge.to_vertex.pos)
+                    if child_in_F is not None:
+                        F.remove_node(child_in_F)
+                    F.add_node(edge.to_vertex.pos, prev=node, next=node.next)
+                    C[edge.to_vertex.pos] = (g_child, node.data)
+                next = node.next
+                F.remove_node(node)
+                node = next
+
+            flimit = fmin
+
+        if found:
+            return FringeSearch.build_path(graph, C)
+
+    @staticmethod
+    def build_path(graph, C):
+        path = [graph.vertices[graph.end]]
+        (g, parent) = C[graph.end_index]
+        while parent is not None:
+            path.insert(0, graph.vertices[graph.get_vertex_coordinates_from_pos(parent)])
+            (_, parent) = C[parent]
+
+        return path, g
+
+
+
