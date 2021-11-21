@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import numpy as np
 from Graph import Graph
 from DoubleLinkedList import DoubleLinkedList
@@ -247,10 +249,12 @@ class HPAStar:
 
         return path, dist
 
+
 class FringeSearch:
 
     @staticmethod
     def solve(graph):
+        # total_list_time = 0
         def h(from_coordinate):
             return ((
                             abs(from_coordinate[0] - graph.end[0])
@@ -258,35 +262,55 @@ class FringeSearch:
                     ) * 10)
 
         F = [graph.start_index]
+        #now = [graph.start_index]
+        #later = []
         C = np.full(graph.vertices.flatten().shape, None)
+        index_in_list = np.full(graph.vertices.flatten().shape, False)
+        index_in_list[graph.start_index] = True
         C[graph.start_index] = (0, None)
         flimit = h(graph.start)
 
         while len(F) > 0:
             fmin = np.inf
-            for index in F:
+            i = 0
+            while i < len(F):
+                index = F[i]
                 (g, parent) = C[index]
                 f = g + h(graph.get_vertex_coordinates_from_pos(index))
                 if f > flimit:
                     fmin = min(f, fmin)
+                    index_in_list[index] = False
+                    i += 1
                     continue
+
                 if index == graph.end_index:
+                    #print("list time:", total_list_time)
                     return FringeSearch.build_path(graph, C)
-                for edge in graph.vertices[graph.get_vertex_coordinates_from_pos(index)].edges:
+
+                for edge in sorted(graph.vertices[graph.get_vertex_coordinates_from_pos(index)].edges,
+                                   key=lambda e: e.weight, reverse=True):
                     g_child = g + edge.weight
                     if C[edge.to_vertex.pos] is not None:
                         (g_cached, parent) = C[edge.to_vertex.pos]
                         if g_child >= g_cached:
                             continue
-                    try:
+                    #s = datetime.now()
+                    if index_in_list[edge.to_vertex.pos]:
                         F.remove(edge.to_vertex.pos)
-                    except ValueError:
-                        pass
-                    F.insert(F.index(index)+1, edge.to_vertex.pos)
+                        index_in_list[edge.to_vertex.pos] = False
+
+                    #total_list_time += (datetime.now() - s).total_seconds()
+                    F.insert(i+1, edge.to_vertex.pos)
+                    index_in_list[edge.to_vertex.pos] = True
                     C[edge.to_vertex.pos] = (g_child, index)
-                F.remove(index)
+                F.__delitem__(i)
+                index_in_list[index] = False
 
             flimit = fmin
+            #now = later
+            #later = []
+
+        return [], None
 
     @staticmethod
     def build_path(graph, C):
