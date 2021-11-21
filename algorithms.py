@@ -220,8 +220,8 @@ class HPAStar:
                     elif chunk_in[1] == (y_chunk + 1) * HPAStar.chunksize:
                         inter_dist = graph.vertices[chunk_in].north.weight
                         start = (chunk_in[0], chunk_in[1]-1)
+                    chunk.set_start(start[0] % HPAStar.chunksize, start[1] % HPAStar.chunksize)
                     for end in chunk_outs[x_chunk, y_chunk]:
-                        chunk.set_start(start[0] % HPAStar.chunksize, start[1] % HPAStar.chunksize)
                         chunk.set_end(end[0] % HPAStar.chunksize, end[1] % HPAStar.chunksize)
 
                         path, dist = AStar.solve(chunk)
@@ -257,44 +257,36 @@ class FringeSearch:
                             + abs(from_coordinate[1] - graph.end[1])
                     ) * 10)
 
-        F = DoubleLinkedList(graph.start_index)
+        F = [graph.start_index]
         C = np.full(graph.vertices.flatten().shape, None)
         C[graph.start_index] = (0, None)
         flimit = h(graph.start)
-        found = False
 
-        while not found and not F.is_empty():
+        while len(F) > 0:
             fmin = np.inf
-            node = F.head
-            while node is not None:
-                (g, parent) = C[node.data]
-                f = g + h(graph.get_vertex_coordinates_from_pos(node.data))
+            for index in F:
+                (g, parent) = C[index]
+                f = g + h(graph.get_vertex_coordinates_from_pos(index))
                 if f > flimit:
                     fmin = min(f, fmin)
-                    node = node.next
                     continue
-                if node.data == graph.end_index:
-                    found = True
-                    break
-                for edge in graph.vertices[graph.get_vertex_coordinates_from_pos(node.data)].edges:
+                if index == graph.end_index:
+                    return FringeSearch.build_path(graph, C)
+                for edge in graph.vertices[graph.get_vertex_coordinates_from_pos(index)].edges:
                     g_child = g + edge.weight
                     if C[edge.to_vertex.pos] is not None:
                         (g_cached, parent) = C[edge.to_vertex.pos]
                         if g_child >= g_cached:
                             continue
-                    child_in_F = F.find(edge.to_vertex.pos)
-                    if child_in_F is not None:
-                        F.remove_node(child_in_F)
-                    F.add_node(edge.to_vertex.pos, prev=node, next=node.next)
-                    C[edge.to_vertex.pos] = (g_child, node.data)
-                next = node.next
-                F.remove_node(node)
-                node = next
+                    try:
+                        F.remove(edge.to_vertex.pos)
+                    except ValueError:
+                        pass
+                    F.insert(F.index(index)+1, edge.to_vertex.pos)
+                    C[edge.to_vertex.pos] = (g_child, index)
+                F.remove(index)
 
             flimit = fmin
-
-        if found:
-            return FringeSearch.build_path(graph, C)
 
     @staticmethod
     def build_path(graph, C):
