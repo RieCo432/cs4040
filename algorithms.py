@@ -284,7 +284,6 @@ class FringeSearch:
                     continue
 
                 if index == graph.end_index:
-                    #print("list time:", total_list_time)
                     return FringeSearch.build_path(graph, C)
 
                 for edge in sorted(graph.vertices[graph.get_vertex_coordinates_from_pos(index)].edges,
@@ -294,16 +293,17 @@ class FringeSearch:
                         (g_cached, parent) = C[edge.to_vertex.pos]
                         if g_child >= g_cached:
                             continue
-                    #s = datetime.now()
                     if index_in_list[edge.to_vertex.pos]:
-                        F.remove(edge.to_vertex.pos)
-                        index_in_list[edge.to_vertex.pos] = False
+                        try:
+                            F.remove(edge.to_vertex.pos)
+                        except ValueError:
+                            index_in_list[edge.to_vertex.pos] = False
+                            #print("error")
 
-                    #total_list_time += (datetime.now() - s).total_seconds()
                     F.insert(i+1, edge.to_vertex.pos)
                     index_in_list[edge.to_vertex.pos] = True
                     C[edge.to_vertex.pos] = (g_child, index)
-                F.__delitem__(i)
+                F.pop(i)
                 index_in_list[index] = False
 
             flimit = fmin

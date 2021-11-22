@@ -1,4 +1,4 @@
-from algorithms import Dijkstra, AStar, HPAStar
+from algorithms import Dijkstra, AStar, HPAStar, FringeSearch
 from create_all_maps import graph_sizes, styles, number_of_maps_per_config
 import json
 from datetime import datetime
@@ -9,7 +9,7 @@ with open("results.json", "r") as infile:
     timings = json.load(infile)
 
 
-algos = ["dijkstra", "astar", "hpastar"]
+algos = ["astar", "hpastar", "fringe"]
 runs_per_map = 25
 
 counter = 0
@@ -54,6 +54,15 @@ for graph_size in graph_sizes:
                     elif algo == "hpastar":
                         start = datetime.now()
                         path, dist = HPAStar.solve(graph)
+                        end = datetime.now()
+                        timings["size" + str(graph_size)]["hard" + str(style[0])]["soft" + str(style[1])][str(i)][algo][
+                            "dists"].append(dist)
+                        timings["size" + str(graph_size)]["hard" + str(style[0])]["soft" + str(style[1])][str(i)][algo][
+                            "timings"].append((end - start).total_seconds())
+
+                    elif algo == "fringe":
+                        start = datetime.now()
+                        path, dist = FringeSearch.solve(graph)
                         end = datetime.now()
                         timings["size" + str(graph_size)]["hard" + str(style[0])]["soft" + str(style[1])][str(i)][algo][
                             "dists"].append(dist)
