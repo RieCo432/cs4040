@@ -9,7 +9,7 @@ with open("results.json", "r") as infile:
     timings = json.load(infile)
 
 
-algos = ["astar", "hpastar", "fringe"]
+algos = ["dijkstra", "astar", "hpastar", "fringe"]
 runs_per_map = 25
 
 counter = 0
