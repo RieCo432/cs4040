@@ -36,7 +36,7 @@ for algo in algos:
                     dists[algo][size][str(style[0]) + ":" + str(style[1])].append(
                         results["size" + str(size)]["hard" + str(style[0])]["soft" + str(style[1])][str(num)][algo][
                             "dists"][0])
-                    #print(algo, size, style, num)
+                    print(algo, size, style, num)
 
 #print(timings)
 #print(dists)
@@ -44,6 +44,7 @@ for algo in algos:
 all_times_per_algo_and_size = {}
 mean_times_per_algo_and_size = {}
 total_time = 0
+total_runs = 0
 
 for algo in algos:
     all_times_per_algo_and_size[algo] = {}
@@ -56,12 +57,13 @@ for algo in algos:
                     try:
                         all_times_per_algo_and_size[algo][size].append(np.mean(results[size_string][hard][soft][num][algo]["timings"]))
                         total_time += sum(results[size_string][hard][soft][num][algo]["timings"])
+                        total_runs += len(results[size_string][hard][soft][num][algo]["timings"])
                     except KeyError:
                         pass
         mean_times_per_algo_and_size[algo].append(np.mean(all_times_per_algo_and_size[algo][size]))
 
-#print(total_time)
-
+print(total_time)
+print(total_runs)
 
 def plot_mean_runtimes_by_size(algos_to_show):
     for algo in algos_to_show:
@@ -77,11 +79,11 @@ def plot_mean_runtimes_by_size(algos_to_show):
 def show_runtime_distribution_by_size(algos_to_show, bins=None):
     for size, size_label in zip(graph_sizes, size_labels):
         if bins is None:
-            plt.hist([all_times_per_algo_and_size[algo]["size"+str(size)] for algo in algos_to_show],
+            plt.hist([all_times_per_algo_and_size[algo][size] for algo in algos_to_show],
                      color=[colors[algo] for algo in algos_to_show],
                      label=[display_names[algo] for algo in algos_to_show])
         else:
-            plt.hist([all_times_per_algo_and_size[algo]["size" + str(size)] for algo in algos_to_show],
+            plt.hist([all_times_per_algo_and_size[algo][size] for algo in algos_to_show],
                      color=[colors[algo] for algo in algos_to_show],
                      label=[display_names[algo] for algo in algos_to_show],
                      bins=bins)
@@ -124,7 +126,7 @@ for algo in algos:
         for t in for_size:
             relativeruntimes[algo].append(t)
 
-print(relativeruntimes)
+# print(relativeruntimes)
 
 
 def show_relative_runtime_distributions(algos_to_show, bins=None):
@@ -168,16 +170,16 @@ for algo in algos:
 if True:
     # print(reldistdiffs)
     # print(mean_times_per_algo_and_size)
-
+    #
     # plot_mean_runtimes_by_size(algos)
     # plot_mean_runtimes_by_size([algo for algo in algos if algo != "dijkstra"])
 
     # show_runtime_distribution_by_size(["hpastar"])
-    # show_runtime_distribution_by_size(["astar", "fringe"], bins=20)
+    #show_runtime_distribution_by_size(["astar", "fringe"], bins=20)
 
     # show_relative_runtime_distributions(["astar", "hpastar", "fringe", "dijkstra"], bins=12)
     # plot_relative_runtime_percentiles(["astar", "dijkstra", "hpastar", "fringe"])
-
+    #
     # print(percentiles_of_relative_runtime)
 
     pass

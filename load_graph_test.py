@@ -22,6 +22,14 @@ print("A*", elapsed)
 
 g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
 
+# start = datetime.now()
+# path, dist = HPAStar.solve(g)
+# end = datetime.now()
+# elapsed = (end - start).total_seconds()
+# print("HPA*", elapsed)
+#
+# g.show_graph(path=path, title="{:10s}{:10.2f}".format("HPA*", dist))
+
 # path, dist = HPAStar.solve(g)
 # g.show_graph(path=path, title="{:10s}{:10.2f}".format("HPA*", dist))
 

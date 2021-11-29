@@ -10,6 +10,7 @@ class DoubleLinkedList:
         node = Node(data)
         self.head = node
         self.tail = node
+        self.current = self.head
 
     def add_node(self, data, prev, next):
         node = Node(data, prev, next)
@@ -52,6 +53,18 @@ class DoubleLinkedList:
     def is_empty(self):
         return self.head is None and self.tail is None
 
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        result = self.current
+        if result is None:
+            raise StopIteration
+        else:
+            self.current = result.next
+            return result
+
+
 
 if __name__ == "__main__":
     l = DoubleLinkedList(3)
@@ -69,6 +82,11 @@ if __name__ == "__main__":
     print(l.find(3).data)
     print(l.find(2).data)
     print(l.find(6).data)
+
+
+    for node in l:
+        l.add_node("hey", prev=node, next=node.next)
+        print(node.data)
 
 
     l.remove_node(l.head)

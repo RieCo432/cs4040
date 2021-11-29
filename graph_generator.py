@@ -65,24 +65,24 @@ def generate_graph(width, height, hard_obstacles_density=0.0, soft_obstacles_den
 
 if __name__ == "__main__":
     if True:
-        g = generate_graph(100, 100, hard_obstacles_density=0.3, soft_obstacles_density=0.7)
+        g = generate_graph(50, 50, hard_obstacles_density=0.1, soft_obstacles_density=0.7)
 
-        start = datetime.now()
-        path, dist = Dijkstra.solve(g)
-        end = datetime.now()
-        elapsed = (end - start).total_seconds()
-        print(elapsed)
-        g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
-        print("{:10s}{:10.2f}".format("Dijkstra", dist))
+        # start = datetime.now()
+        # path, dist = Dijkstra.solve(g)
+        # end = datetime.now()
+        # elapsed = (end - start).total_seconds()
+        # print(elapsed)
+        # g.show_graph(path=path, title="{:10s}{:10.2f}".format("Dijkstra", dist))
+        # print("{:10s}{:10.2f}".format("Dijkstra", dist))
 
-        path, dist = AStar.solve(g)
-        g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
-        print("{:10s}{:10.2f}".format("A*", dist))
-
-        path, dist = HPAStar.solve(g)
-        g.show_graph(path=path, title="{:10s}{:10.2f}".format("HPA*", dist))
-        print("{:10s}{:10.2f}".format("HPA*", dist))
-
-        path, dist = FringeSearch.solve(g)
-        g.show_graph(path=path, title="{:10s}{:10.2f}".format("FringeSearch", dist))
-        print("{:10s}{:10.2f}".format("FringeSearch", dist))
+        # path, dist = AStar.solve(g)
+        # g.show_graph(path=path, title="{:10s}{:10.2f}".format("A*", dist))
+        # print("{:10s}{:10.2f}".format("A*", dist))
+        #
+        # path, dist = HPAStar.solve(g)
+        # g.show_graph(path=path, title="{:10s}{:10.2f}".format("HPA*", dist))
+        # print("{:10s}{:10.2f}".format("HPA*", dist))
+        #
+        # path, dist = FringeSearch.solve(g)
+        # g.show_graph(path=path, title="{:10s}{:10.2f}".format("FringeSearch", dist))
+        # print("{:10s}{:10.2f}".format("FringeSearch", dist))

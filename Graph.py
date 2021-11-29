@@ -178,7 +178,9 @@ class Graph:
                     image[4 * x - 2, 4 * y + 1] = color
 
         image = np.flip(np.rot90(image, k=3, axes=(0, 1)), axis=1)
-        plt.figure(figsize=(32,24))
+        plt.figure(figsize=(self.vertices.shape[0] // 3, self.vertices.shape[1] // 3))
+        plt.xticks([])
+        plt.yticks([])
         if title is not None:
             plt.title(title)
         plt.imshow(image, interpolation=None)
