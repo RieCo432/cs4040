@@ -168,19 +168,35 @@ for algo in algos:
 #        Actually included in report         #
 ##############################################
 if True:
-    # print(reldistdiffs)
-    # print(mean_times_per_algo_and_size)
-    #
-    # plot_mean_runtimes_by_size(algos)
-    # plot_mean_runtimes_by_size([algo for algo in algos if algo != "dijkstra"])
+    print(stats.kruskal(all_times_per_algo_and_size["dijkstra"][20], all_times_per_algo_and_size["astar"][20],
+                        all_times_per_algo_and_size["hpastar"][20], all_times_per_algo_and_size["fringe"][20]))
+    print(stats.kruskal(all_times_per_algo_and_size["dijkstra"][50], all_times_per_algo_and_size["astar"][50],
+                        all_times_per_algo_and_size["hpastar"][50], all_times_per_algo_and_size["fringe"][50]))
+    print(stats.kruskal(all_times_per_algo_and_size["dijkstra"][100], all_times_per_algo_and_size["astar"][100],
+                        all_times_per_algo_and_size["hpastar"][100], all_times_per_algo_and_size["fringe"][100]))
+    print(stats.kruskal(all_times_per_algo_and_size["dijkstra"][150], all_times_per_algo_and_size["astar"][150],
+                        all_times_per_algo_and_size["hpastar"][150], all_times_per_algo_and_size["fringe"][150]))
+    print(stats.kruskal(all_times_per_algo_and_size["dijkstra"][200], all_times_per_algo_and_size["astar"][200],
+                        all_times_per_algo_and_size["hpastar"][200], all_times_per_algo_and_size["fringe"][200]))
 
-    # show_runtime_distribution_by_size(["hpastar"])
-    #show_runtime_distribution_by_size(["astar", "fringe"], bins=20)
+    print(stats.kruskal(all_times_per_algo_and_size["dijkstra"][20], all_times_per_algo_and_size["dijkstra"][50], all_times_per_algo_and_size["dijkstra"][100], all_times_per_algo_and_size["dijkstra"][150], all_times_per_algo_and_size["dijkstra"][200]))
+    print(stats.kruskal(all_times_per_algo_and_size["astar"][20], all_times_per_algo_and_size["astar"][50], all_times_per_algo_and_size["astar"][100], all_times_per_algo_and_size["astar"][150], all_times_per_algo_and_size["astar"][200]))
+    print(stats.kruskal( all_times_per_algo_and_size["hpastar"][20], all_times_per_algo_and_size["hpastar"][50], all_times_per_algo_and_size["hpastar"][100], all_times_per_algo_and_size["hpastar"][150], all_times_per_algo_and_size["hpastar"][200]))
+    print(stats.kruskal(all_times_per_algo_and_size["fringe"][20], all_times_per_algo_and_size["fringe"][50], all_times_per_algo_and_size["fringe"][100], all_times_per_algo_and_size["fringe"][150], all_times_per_algo_and_size["fringe"][200]))
 
-    # show_relative_runtime_distributions(["astar", "hpastar", "fringe", "dijkstra"], bins=12)
-    # plot_relative_runtime_percentiles(["astar", "dijkstra", "hpastar", "fringe"])
-    #
-    # print(percentiles_of_relative_runtime)
+    print(reldistdiffs)
+    print(mean_times_per_algo_and_size)
+
+    plot_mean_runtimes_by_size(algos)
+    plot_mean_runtimes_by_size([algo for algo in algos if algo != "dijkstra"])
+
+    show_runtime_distribution_by_size(["hpastar"])
+    show_runtime_distribution_by_size(["astar", "fringe"], bins=20)
+
+    show_relative_runtime_distributions(["astar", "hpastar", "fringe", "dijkstra"], bins=12)
+    plot_relative_runtime_percentiles(["astar", "dijkstra", "hpastar", "fringe"])
+
+    print(percentiles_of_relative_runtime)
 
     pass
 
